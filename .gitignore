@@ -1,0 +1,21 @@
+# Python virtual environment
+venv/
+.env
+__pycache__/
+*.pyc
+
+# Next.js and frontend build directories / dependencies
+node_modules/
+.next/
+out/
+build/
+
+# Local databases and temporary files
+registry.db
+vector_db/
+temp_uploads/
+.env*.local
+
+# System files
+.DS_Store
+Thumbs.db

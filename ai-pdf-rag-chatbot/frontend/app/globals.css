@@ -1,0 +1,271 @@
+@import "tailwindcss";
+
+:root {
+  --background: #050814;
+  --foreground: #f8fafc;
+}
+
+body {
+  background-color: #050814;
+  color: #f8fafc;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* ==========================================
+   Light Mode Theme Overrides
+   ========================================== */
+html:not(.dark) {
+  --background: #f8fafc;
+  --foreground: #0f172a;
+}
+
+html:not(.dark) body {
+  background-color: #f8fafc;
+  color: #0f172a;
+}
+
+/* Background Overrides */
+html:not(.dark) .bg-\[\#050814\] {
+  background-color: #f8fafc !important;
+  color: #0f172a !important;
+}
+
+/* Sidebar */
+html:not(.dark) .bg-\[\#070B18\]\/90 {
+  background-color: #f1f5f9 !important;
+  border-color: #e2e8f0 !important;
+}
+
+html:not(.dark) .bg-\[\#070B18\]\/60 {
+  background-color: rgba(241, 245, 249, 0.8) !important;
+  border-color: #e2e8f0 !important;
+}
+
+/* Cards & Containers */
+html:not(.dark) .bg-\[\#0f172a\]\/80 {
+  background-color: #ffffff !important;
+  border-color: #cbd5e1 !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04) !important;
+}
+
+html:not(.dark) .bg-\[\#0b0d19\]\/40 {
+  background-color: #f8fafc !important;
+  border-color: #e2e8f0 !important;
+}
+
+html:not(.dark) .bg-\[\#0b0d19\]\/85,
+html:not(.dark) .bg-\[\#0b0d19\]\/80 {
+  background-color: #f8fafc !important;
+  border-color: #e2e8f0 !important;
+  color: #0f172a !important;
+}
+
+html:not(.dark) .bg-\[\#0b0d19\] {
+  background-color: #ffffff !important;
+  border-color: #cbd5e1 !important;
+  color: #0f172a !important;
+}
+
+/* General Layout Slate Boxes */
+html:not(.dark) .bg-slate-900\/90 {
+  background-color: #f1f5f9 !important;
+  border-color: #cbd5e1 !important;
+  color: #0f172a !important;
+}
+
+html:not(.dark) .bg-slate-900\/60 {
+  background-color: #f1f5f9 !important;
+  border-color: #cbd5e1 !important;
+  color: #334155 !important;
+}
+
+html:not(.dark) .bg-slate-900\/40,
+html:not(.dark) .bg-slate-900\/45 {
+  background-color: #ffffff !important;
+  border-color: #e2e8f0 !important;
+}
+
+html:not(.dark) .bg-slate-900 {
+  background-color: #e2e8f0 !important;
+}
+
+html:not(.dark) .bg-slate-950\/40 {
+  background-color: #ffffff !important;
+  border-color: #e2e8f0 !important;
+}
+
+html:not(.dark) .bg-slate-950\/20 {
+  background-color: #f8fafc !important;
+  border-color: #e2e8f0 !important;
+}
+
+html:not(.dark) .bg-slate-950\/60 {
+  background-color: #ffffff !important;
+  border-color: #cbd5e1 !important;
+}
+
+html:not(.dark) .bg-slate-950 {
+  background-color: #e2e8f0 !important;
+  color: #0f172a !important;
+}
+
+/* Custom form inputs */
+html:not(.dark) select,
+html:not(.dark) input[type="text"],
+html:not(.dark) input[type="password"] {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+  border-color: #cbd5e1 !important;
+}
+
+/* Pipeline UI active, completed, and inactive card overrides */
+html:not(.dark) .bg-purple-950\/15 {
+  background-color: #faf5ff !important;
+  border-color: #d8b4fe !important;
+}
+
+html:not(.dark) .bg-purple-950\/15 .text-purple-400 {
+  color: #7e22ce !important;
+}
+
+html:not(.dark) .bg-purple-950\/15 .text-slate-200 {
+  color: #5b21b6 !important;
+}
+
+html:not(.dark) .bg-emerald-950\/5 {
+  background-color: #ecfdf5 !important;
+  border-color: #6ee7b7 !important;
+}
+
+html:not(.dark) .bg-emerald-950\/5 .text-emerald-400 {
+  color: #047857 !important;
+}
+
+html:not(.dark) .bg-emerald-950\/5 .text-slate-400 {
+  color: #065f46 !important;
+}
+
+html:not(.dark) .bg-slate-950\/20 {
+  background-color: #f1f5f9 !important;
+  border-color: #cbd5e1 !important;
+}
+
+/* Pipeline Details Box: bg-[#0b0d19]/80 -> bg-slate-100 */
+html:not(.dark) .bg-\[\#0b0d19\]\/80 {
+  background-color: #f1f5f9 !important;
+  border-color: #cbd5e1 !important;
+}
+
+/* Active & themed text indicators */
+html:not(.dark) .text-purple-400 {
+  color: #7c3aed !important;
+}
+
+html:not(.dark) .text-emerald-400 {
+  color: #059669 !important;
+}
+
+html:not(.dark) .text-cyan-400 {
+  color: #0891b2 !important;
+}
+
+html:not(.dark) .text-amber-400 {
+  color: #b45309 !important;
+}
+
+/* General Text Contrast Boosters */
+html:not(.dark) .text-white {
+  color: #0f172a !important;
+}
+
+html:not(.dark) .text-slate-100 {
+  color: #1e293b !important;
+}
+
+html:not(.dark) .text-slate-200 {
+  color: #334155 !important;
+}
+
+html:not(.dark) .text-slate-300 {
+  color: #475569 !important;
+}
+
+html:not(.dark) .text-slate-400 {
+  color: #475569 !important;
+}
+
+html:not(.dark) .text-slate-500 {
+  color: #64748b !important;
+}
+
+html:not(.dark) .text-slate-600 {
+  color: #94a3b8 !important;
+}
+
+/* Nav Item active highlights */
+html:not(.dark) .bg-purple-500\/10 {
+  background-color: rgba(124, 58, 237, 0.08) !important;
+  border-color: rgba(124, 58, 237, 0.2) !important;
+  color: #6d28d9 !important;
+}
+
+/* Code block markdown inside Chat */
+html:not(.dark) code {
+  background-color: #f1f5f9 !important;
+  color: #7c3aed !important;
+  border-color: #cbd5e1 !important;
+}
+
+/* Sub-panels and stats boxes in comparison dashboard */
+html:not(.dark) .bg-purple-500\/10.border-purple-500\/50,
+html:not(.dark) .bg-purple-500\/10.border-purple-500 {
+  background-color: #faf5ff !important;
+  border-color: #c084fc !important;
+  color: #7e22ce !important;
+}
+
+html:not(.dark) .bg-red-500\/10.border-red-500\/50,
+html:not(.dark) .bg-red-500\/10.border-red-500 {
+  background-color: #fef2f2 !important;
+  border-color: #f87171 !important;
+  color: #b91c1c !important;
+}
+
+html:not(.dark) .bg-red-500\/5 {
+  background-color: #fef2f2 !important;
+  border-color: #fee2e2 !important;
+  color: #991b1b !important;
+}
+
+html:not(.dark) .bg-purple-500\/5 {
+  background-color: #faf5ff !important;
+  border-color: #f3e8ff !important;
+  color: #6b21a8 !important;
+}
+
+/* Border Overrides */
+html:not(.dark) .border-slate-800\/80,
+html:not(.dark) .border-slate-800,
+html:not(.dark) .border-slate-900,
+html:not(.dark) .border-slate-950 {
+  border-color: #cbd5e1 !important;
+}
+
+/* Custom thin scrollbars for dashboard widgets */
+.scrollbar-thin::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.2);
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.25);
+  border-radius: 999px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background: rgba(124, 58, 237, 0.4);
+}
