@@ -28,6 +28,8 @@ interface SidebarProps {
   topK: number;
   llmModelName: string;
   onClearAll: () => void;
+  isOpen?: boolean;
+  onClose?: () => void;
 }
 
 export default function Sidebar({
@@ -43,6 +45,8 @@ export default function Sidebar({
   topK,
   llmModelName,
   onClearAll,
+  isOpen,
+  onClose,
 }: SidebarProps) {
   const navItems = [
     { id: "Dashboard", label: "Dashboard", icon: <Home className="w-4 h-4" /> },
@@ -52,20 +56,35 @@ export default function Sidebar({
   ];
 
   return (
-    <aside className="w-64 border-r border-slate-800/80 bg-[#070B18]/90 flex flex-col h-screen overflow-y-auto px-4 py-6 shrink-0">
+    <aside className={`w-64 border-r border-slate-800/80 bg-[#070B18]/90 flex flex-col h-screen overflow-y-auto px-4 py-6 shrink-0 fixed inset-y-0 left-0 z-50 transition-transform duration-300 ease-in-out lg:relative lg:translate-x-0 ${
+      isOpen ? "translate-x-0" : "-translate-x-full"
+    }`}>
       {/* Branding Header */}
-      <div className="flex items-center gap-3 mb-6 px-1">
-        <div className="relative flex items-center justify-center w-10 h-10 rounded-xl bg-purple-500/10 border border-purple-500/20 text-purple-400 shadow-[0_0_15px_rgba(124,58,237,0.15)]">
-          <Bot className="w-6 h-6 animate-pulse" />
+      <div className="flex items-center justify-between mb-6 px-1">
+        <div className="flex items-center gap-3">
+          <div className="relative flex items-center justify-center w-10 h-10 rounded-xl bg-purple-500/10 border border-purple-500/20 text-purple-400 shadow-[0_0_15px_rgba(124,58,237,0.15)]">
+            <Bot className="w-6 h-6 animate-pulse" />
+          </div>
+          <div>
+            <h1 className="text-sm font-extrabold text-white tracking-tight leading-tight">
+              RAG PDF Chatbot
+            </h1>
+            <p className="text-[10px] font-semibold text-slate-400">
+              Powered by Groq + Llama 3.3
+            </p>
+          </div>
         </div>
-        <div>
-          <h1 className="text-sm font-extrabold text-white tracking-tight leading-tight">
-            RAG PDF Chatbot
-          </h1>
-          <p className="text-[10px] font-semibold text-slate-400">
-            Powered by Groq + Llama 3.3
-          </p>
-        </div>
+        {onClose && (
+          <button
+            onClick={onClose}
+            className="lg:hidden p-1.5 rounded-lg border border-slate-800/80 text-slate-400 hover:text-white hover:bg-slate-900 cursor-pointer"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        )}
       </div>
 
       {/* Upload PDF Section */}
@@ -122,7 +141,10 @@ export default function Sidebar({
             return (
               <button
                 key={item.id}
-                onClick={() => setActivePage(item.id)}
+                onClick={() => {
+                  setActivePage(item.id);
+                  if (onClose) onClose();
+                }}
                 className={`flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold transition-all text-left ${
                   isActive
                     ? "bg-purple-500/10 border border-purple-500/20 text-purple-300 shadow-[0_0_10px_rgba(124,58,237,0.05)]"
@@ -143,7 +165,10 @@ export default function Sidebar({
           Architecture Comparison
         </h2>
         <button
-          onClick={() => setActivePage("Comparison")}
+          onClick={() => {
+            setActivePage("Comparison");
+            if (onClose) onClose();
+          }}
           className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold transition-all text-left relative overflow-hidden group ${
             activePage === "Comparison"
               ? "bg-gradient-to-r from-purple-600/20 to-indigo-600/20 border-2 border-purple-500 text-purple-200 shadow-[0_0_15px_rgba(168,85,247,0.3)]"

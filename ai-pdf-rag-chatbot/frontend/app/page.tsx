@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Bot, Sun, Moon, Sparkles, Layers, Binary, Cpu, Trash2, Sliders, RefreshCw, FileText, CheckCircle2, Search, BarChart3, HelpCircle } from "lucide-react";
+import { Bot, Sun, Moon, Sparkles, Layers, Binary, Cpu, Trash2, Sliders, RefreshCw, FileText, CheckCircle2, Search, BarChart3, HelpCircle, Menu } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 import Sidebar from "../components/Sidebar";
@@ -14,7 +14,7 @@ import { api, DocumentInfo, RagasScores, SourceReference } from "../lib/api";
 export default function DashboardPage() {
   // Navigation & UI States
   const [activePage, setActivePage] = useState("Dashboard");
-  const [isDarkMode, setIsDarkMode] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [onlineStatus, setOnlineStatus] = useState(true);
   const [mounted, setMounted] = useState(false);
 
@@ -56,16 +56,16 @@ export default function DashboardPage() {
   const [ragasScores, setRagasScores] = useState<RagasScores | null>(null);
   const [rewrittenQuery, setRewrittenQuery] = useState("");
 
-  // Toggle dark/light class on root HTML element
+  // Force dark mode permanently
   useEffect(() => {
-    if (isDarkMode) {
-      document.documentElement.classList.add("dark");
-      document.documentElement.style.colorScheme = "dark";
-    } else {
-      document.documentElement.classList.remove("dark");
-      document.documentElement.style.colorScheme = "light";
-    }
-  }, [isDarkMode]);
+    document.documentElement.classList.add("dark");
+    document.documentElement.style.colorScheme = "dark";
+  }, []);
+
+  // Close mobile sidebar on page navigation
+  useEffect(() => {
+    setIsSidebarOpen(false);
+  }, [activePage]);
 
   // Load stats on mount
   useEffect(() => {
@@ -311,36 +311,35 @@ export default function DashboardPage() {
         topK={topK}
         llmModelName={llmModelName}
         onClearAll={handleClearAll}
+        isOpen={isSidebarOpen}
+        onClose={() => setIsSidebarOpen(false)}
       />
+
+      {/* Sidebar Backdrop Overlay on Mobile */}
+      {isSidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-45 lg:hidden"
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
 
       {/* MAIN CONTENT WORKSPACE */}
       <div className="flex-1 flex flex-col h-full overflow-hidden">
         {/* TOP STATUS NAVIGATION BAR */}
-        <header className="flex items-center justify-between border-b border-slate-800/80 px-8 py-3.5 bg-[#070B18]/60 backdrop-blur-md z-10 shrink-0">
-          <div className="flex items-center gap-2">
+        <header className="flex items-center justify-between border-b border-slate-800/80 px-6 md:px-8 py-3.5 bg-[#070B18]/60 backdrop-blur-md z-10 shrink-0">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setIsSidebarOpen(true)}
+              className="lg:hidden p-1.5 rounded-lg border border-slate-800 text-slate-400 hover:text-white hover:bg-slate-900 cursor-pointer"
+            >
+              <Menu className="w-4 h-4" />
+            </button>
             <h2 className="text-sm font-extrabold tracking-tight text-white uppercase">
               {activePage}
             </h2>
           </div>
 
           <div className="flex items-center gap-3">
-            {/* Dark Mode toggle indicator */}
-            <button
-              onClick={() => setIsDarkMode(!isDarkMode)}
-              className="flex items-center gap-1.5 px-3 py-1 rounded-full border border-slate-800 text-[10px] font-bold bg-slate-900/40 text-slate-400 hover:text-white transition-colors cursor-pointer"
-            >
-              {isDarkMode ? (
-                <>
-                  <Moon className="w-3 h-3 text-purple-400" />
-                  <span>Dark Mode</span>
-                </>
-              ) : (
-                <>
-                  <Sun className="w-3 h-3 text-amber-400" />
-                  <span>Light Mode</span>
-                </>
-              )}
-            </button>
 
             {/* Online Status Indicator */}
             <div
