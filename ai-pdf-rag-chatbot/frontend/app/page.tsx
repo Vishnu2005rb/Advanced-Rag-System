@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Sidebar from "../components/Sidebar";
 import Pipeline from "../components/Pipeline";
 import ChatBox, { ChatMessage } from "../components/ChatBox";
-import RetrievedContext, { RetrievedSource } from "../components/RetrievedContext";
+import RetrievedContext from "../components/RetrievedContext";
 import RAGComparison from "../components/RAGComparison";
 import { api, DocumentInfo, RagasScores, SourceReference } from "../lib/api";
 

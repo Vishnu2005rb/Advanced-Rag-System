@@ -60,11 +60,12 @@ export default function UploadPDF({
     const { api } = await import("../lib/api");
     try {
       const response = await api.uploadPDF(file);
+      const vectorDim = response.embedding_model === "BAAI/bge-large-en-v1.5" ? 1024 : 384;
       onUploadSuccess(
         response.filename,
         response.pages,
         response.chunks,
-        response.vector_dimension
+        vectorDim
       );
     } catch (err: any) {
       onUploadError(err.message || "Failed to parse PDF document.");

@@ -13,15 +13,7 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 import UploadPDF from "./UploadPDF";
-
-interface DocumentInfo {
-  filename: string;
-  size: string;
-  pages: number;
-  chunks: number;
-  vector_dimension: number;
-  status: string;
-}
+import { DocumentInfo } from "../lib/api";
 
 interface SidebarProps {
   activePage: string;
