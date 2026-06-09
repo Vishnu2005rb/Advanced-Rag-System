@@ -5,8 +5,9 @@ from langchain_chroma import Chroma
 from langchain_core.documents import Document
 from rag.embeddings import get_embeddings
 
-# Use writable /tmp directory on Vercel
-VECTOR_DB_ROOT = "/tmp/vector_db"
+# Use writable directory (defaulting to /tmp, but customizable via DATA_DIR environment variable)
+DATA_DIR = os.getenv("DATA_DIR", "/tmp")
+VECTOR_DB_ROOT = os.path.join(DATA_DIR, "vector_db")
 os.makedirs(VECTOR_DB_ROOT, exist_ok=True)
 
 def get_persist_dir_for_model(model_name: str) -> str:

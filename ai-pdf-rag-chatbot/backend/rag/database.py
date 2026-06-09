@@ -3,8 +3,10 @@ import sqlite3
 import time
 from typing import List, Dict, Optional
 
-# Use writable /tmp directory on Vercel
-DB_PATH = "/tmp/registry.db"
+# Use writable directory (defaulting to /tmp, but customizable via DATA_DIR environment variable)
+DATA_DIR = os.getenv("DATA_DIR", "/tmp")
+os.makedirs(DATA_DIR, exist_ok=True)
+DB_PATH = os.path.join(DATA_DIR, "registry.db")
 
 def get_connection():
     return sqlite3.connect(DB_PATH)
