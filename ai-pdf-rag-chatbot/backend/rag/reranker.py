@@ -1,26 +1,11 @@
+import os
 import math
 import time
+import requests
 from typing import List, Tuple, Optional
-from sentence_transformers import CrossEncoder
 from langchain_core.documents import Document
 
-_reranker_instance = None
 MODEL_NAME = "BAAI/bge-reranker-base"
-
-def get_reranker() -> CrossEncoder:
-    """
-    Initializes and caches the local CrossEncoder reranker model.
-    This model computes cross-attention relevance scores between queries and contexts.
-    """
-    global _reranker_instance
-    if _reranker_instance is None:
-        print(f"Loading reranker model: {MODEL_NAME}...")
-        t_start = time.time()
-        # BAAI/bge-reranker-base is a highly accurate cross-encoder model (~270MB)
-        _reranker_instance = CrossEncoder(MODEL_NAME)
-        duration = time.time() - t_start
-        print(f"Loaded {MODEL_NAME} in {duration:.2f}s")
-    return _reranker_instance
 
 def sigmoid(x: float) -> float:
     """Applies sigmoid function to map raw logit score to a [0.0 - 1.0] probability range."""
@@ -35,38 +20,71 @@ def rerank_documents(
     top_n: int = 5
 ) -> List[Tuple[Document, float]]:
     """
-    Reranks a candidate list of Document objects against a query using BGE Reranker.
-    
-    Args:
-        query: The user search query.
-        documents: A list of candidate Document chunks (e.g. top 20).
-        top_n: The number of top-scoring chunks to select.
-        
-    Returns:
-        A list of tuples containing the ranked Document and its normalized relevance score.
+    Reranks a candidate list of Document objects against a query using Hugging Face's serverless Inference API.
+    If the API key is missing or the request fails, falls back to the original retriever ranking.
     """
     if not documents:
         return []
+
+    api_key = os.getenv("HUGGINGFACEHUB_API_TOKEN") or os.getenv("HF_TOKEN")
+    
+    if api_key:
+        api_url = f"https://api-inference.huggingface.co/models/{MODEL_NAME}"
+        headers = {"Authorization": f"Bearer {api_key}"}
         
-    # Get cached model
-    model = get_reranker()
-    
-    # Construct input pairs: [[query, doc1_text], [query, doc2_text], ...]
-    pairs = [[query, doc.page_content] for doc in documents]
-    
-    # Compute relevance scores (logits)
-    raw_scores = model.predict(pairs)
-    
-    # Zip and normalize scores
-    ranked_results = []
-    for doc, score in zip(documents, raw_scores):
-        normalized_score = float(sigmoid(score))
-        # Ensure it fits within bounds
-        normalized_score = max(0.05, min(0.99, normalized_score))
-        ranked_results.append((doc, normalized_score))
+        # BAAI/bge-reranker-base expects cross-encoder pairs.
+        payload = {
+            "inputs": [
+                {"text": query, "text_pair": doc.page_content}
+                for doc in documents
+            ]
+        }
         
-    # Sort descending by score
-    ranked_results.sort(key=lambda item: item[1], reverse=True)
-    
-    # Return best N chunks
-    return ranked_results[:top_n]
+        try:
+            print(f"Calling Hugging Face Inference API for reranking using {MODEL_NAME}...")
+            response = requests.post(api_url, headers=headers, json=payload, timeout=10)
+            
+            if response.status_code == 200:
+                result = response.json()
+                scores = []
+                
+                # Check response format
+                if isinstance(result, list):
+                    for item in result:
+                        if isinstance(item, dict) and 'score' in item:
+                            scores.append(item['score'])
+                        elif isinstance(item, (int, float)):
+                            scores.append(item)
+                        elif isinstance(item, list) and len(item) > 0 and isinstance(item[0], dict) and 'score' in item[0]:
+                            scores.append(item[0]['score'])
+                
+                if len(scores) == len(documents):
+                    ranked_results = []
+                    for doc, score in zip(documents, scores):
+                        normalized_score = float(score)
+                        # Apply sigmoid if the API returns raw logits (outside [0, 1])
+                        if any(s > 1.0 or s < 0.0 for s in scores):
+                            normalized_score = float(sigmoid(score))
+                        
+                        normalized_score = max(0.05, min(0.99, normalized_score))
+                        ranked_results.append((doc, normalized_score))
+                        
+                    ranked_results.sort(key=lambda item: item[1], reverse=True)
+                    print("Successfully reranked documents via Hugging Face Inference API.")
+                    return ranked_results[:top_n]
+                else:
+                    print(f"Unexpected response length from reranker API: {len(result)} vs {len(documents)}")
+            else:
+                print(f"Hugging Face reranker API returned status {response.status_code}: {response.text}")
+        except Exception as e:
+            print(f"Failed to rerank documents via Hugging Face API: {e}")
+
+    # Fallback: return documents with dummy scores matching their current order
+    print("Falling back to original retriever scores (no reranking applied).")
+    fallback_results = []
+    for idx, doc in enumerate(documents):
+        # Generate a dummy score that preserves original ranking order
+        score = max(0.05, min(0.99, 1.0 - (idx * 0.05)))
+        fallback_results.append((doc, score))
+        
+    return fallback_results[:top_n]
