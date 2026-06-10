@@ -76,6 +76,15 @@ class ChatResponse(BaseModel):
     time_taken: float
     model_used: str
 
+@app.get("/")
+def read_root():
+    return {
+        "message": "Welcome to the Advanced AI PDF RAG Chatbot Backend API!",
+        "version": "2.0.0",
+        "documentation": "/docs",
+        "health": "/health"
+    }
+
 @app.get("/health")
 def health_check():
     return {"status": "ok", "timestamp": time.time(), "version": "2.0.0"}
