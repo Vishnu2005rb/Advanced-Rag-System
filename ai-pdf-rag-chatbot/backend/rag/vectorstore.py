@@ -12,34 +12,56 @@ def _get_default_data_dir() -> str:
     if env_dir:
         return env_dir
         
-    # 2. Check if current working directory is writable
+    # 2. Check if /data (Hugging Face persistent storage) is writable
     try:
-        test_path = os.path.join(os.getcwd(), ".write_test")
-        os.makedirs(test_path, exist_ok=True)
-        test_file = os.path.join(test_path, "test.txt")
-        with open(test_file, "w") as f:
-            f.write("test")
-        os.remove(test_file)
-        os.rmdir(test_path)
-        return os.path.join(os.getcwd(), "data")
+        test_path = "/data"
+        if os.path.exists(test_path):
+            test_file = os.path.join(test_path, ".write_test")
+            with open(test_file, "w") as f:
+                f.write("test")
+            os.remove(test_file)
+            return test_path
     except Exception:
         pass
 
-    # 3. Check if user's home directory is writable (guaranteed writable on Hugging Face Spaces)
+    # 3. Check if /app/data (container writable directory) is writable
+    try:
+        test_path = "/app/data"
+        if os.path.exists(test_path):
+            test_file = os.path.join(test_path, ".write_test")
+            with open(test_file, "w") as f:
+                f.write("test")
+            os.remove(test_file)
+            return test_path
+    except Exception:
+        pass
+
+    # 4. Check if current working directory is writable
+    try:
+        cwd_data = os.path.join(os.getcwd(), "data")
+        os.makedirs(cwd_data, exist_ok=True)
+        test_file = os.path.join(cwd_data, ".write_test")
+        with open(test_file, "w") as f:
+            f.write("test")
+        os.remove(test_file)
+        return cwd_data
+    except Exception:
+        pass
+
+    # 5. Check if user's home directory is writable
     try:
         home_dir = os.path.expanduser("~")
-        test_path = os.path.join(home_dir, ".write_test")
+        test_path = os.path.join(home_dir, "pdf_rag_data")
         os.makedirs(test_path, exist_ok=True)
-        test_file = os.path.join(test_path, "test.txt")
+        test_file = os.path.join(test_path, ".write_test")
         with open(test_file, "w") as f:
             f.write("test")
         os.remove(test_file)
-        os.rmdir(test_path)
-        return os.path.join(home_dir, "pdf_rag_data")
+        return test_path
     except Exception:
         pass
 
-    # 4. Fallback to system temp directory
+    # 6. Fallback to system temp directory
     return tempfile.gettempdir()
 
 DATA_DIR = _get_default_data_dir()
