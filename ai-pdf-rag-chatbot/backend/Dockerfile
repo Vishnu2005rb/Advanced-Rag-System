@@ -17,6 +17,10 @@ RUN pip3 install --no-cache-dir -r requirements.txt
 # Copy the rest of the application code
 COPY . .
 
+# Set up a writable data directory for non-root container users (like Hugging Face UID 1000)
+ENV DATA_DIR=/app/data
+RUN mkdir -p /app/data && chmod -R 777 /app/data
+
 # Expose port 8000 as default
 EXPOSE 8000
 
