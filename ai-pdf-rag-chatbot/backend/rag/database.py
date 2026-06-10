@@ -4,8 +4,43 @@ import tempfile
 import time
 from typing import List, Dict, Optional
 
-# Use writable directory (defaulting to system temp, but customizable via DATA_DIR environment variable)
-DATA_DIR = os.getenv("DATA_DIR", tempfile.gettempdir())
+def _get_default_data_dir() -> str:
+    # 1. Check if DATA_DIR env var is set
+    env_dir = os.getenv("DATA_DIR")
+    if env_dir:
+        return env_dir
+        
+    # 2. Check if current working directory is writable
+    try:
+        test_path = os.path.join(os.getcwd(), ".write_test")
+        os.makedirs(test_path, exist_ok=True)
+        test_file = os.path.join(test_path, "test.txt")
+        with open(test_file, "w") as f:
+            f.write("test")
+        os.remove(test_file)
+        os.rmdir(test_path)
+        return os.path.join(os.getcwd(), "data")
+    except Exception:
+        pass
+
+    # 3. Check if user's home directory is writable (guaranteed writable on Hugging Face Spaces)
+    try:
+        home_dir = os.path.expanduser("~")
+        test_path = os.path.join(home_dir, ".write_test")
+        os.makedirs(test_path, exist_ok=True)
+        test_file = os.path.join(test_path, "test.txt")
+        with open(test_file, "w") as f:
+            f.write("test")
+        os.remove(test_file)
+        os.rmdir(test_path)
+        return os.path.join(home_dir, "pdf_rag_data")
+    except Exception:
+        pass
+
+    # 4. Fallback to system temp directory
+    return tempfile.gettempdir()
+
+DATA_DIR = _get_default_data_dir()
 os.makedirs(DATA_DIR, exist_ok=True)
 DB_PATH = os.path.join(DATA_DIR, "registry.db")
 

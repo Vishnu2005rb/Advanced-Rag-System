@@ -13,6 +13,7 @@ build/
 # Local databases and temporary files
 registry.db
 vector_db/
+chroma_db/
 temp_uploads/
 .env*.local
 
