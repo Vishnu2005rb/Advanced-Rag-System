@@ -1,12 +1,13 @@
 import os
 import shutil
+import tempfile
 from typing import List, Optional
 from langchain_chroma import Chroma
 from langchain_core.documents import Document
 from rag.embeddings import get_embeddings
 
-# Use writable directory (defaulting to /tmp, but customizable via DATA_DIR environment variable)
-DATA_DIR = os.getenv("DATA_DIR", "/tmp")
+# Use writable directory (defaulting to system temp, but customizable via DATA_DIR environment variable)
+DATA_DIR = os.getenv("DATA_DIR", tempfile.gettempdir())
 VECTOR_DB_ROOT = os.path.join(DATA_DIR, "vector_db")
 os.makedirs(VECTOR_DB_ROOT, exist_ok=True)
 

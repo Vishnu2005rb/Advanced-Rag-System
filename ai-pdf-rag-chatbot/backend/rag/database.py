@@ -1,10 +1,11 @@
 import os
 import sqlite3
+import tempfile
 import time
 from typing import List, Dict, Optional
 
-# Use writable directory (defaulting to /tmp, but customizable via DATA_DIR environment variable)
-DATA_DIR = os.getenv("DATA_DIR", "/tmp")
+# Use writable directory (defaulting to system temp, but customizable via DATA_DIR environment variable)
+DATA_DIR = os.getenv("DATA_DIR", tempfile.gettempdir())
 os.makedirs(DATA_DIR, exist_ok=True)
 DB_PATH = os.path.join(DATA_DIR, "registry.db")
 

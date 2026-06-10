@@ -1,10 +1,11 @@
 import os
+import tempfile
 from typing import List
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_core.documents import Document
 
-# Use writable /tmp directory on Vercel
-TEMP_DIR = "/tmp/temp_uploads"
+# Use writable temp directory (defaulting to system temp)
+TEMP_DIR = os.path.join(tempfile.gettempdir(), "temp_uploads")
 os.makedirs(TEMP_DIR, exist_ok=True)
 
 def load_pdf_bytes(file_bytes: bytes, filename: str) -> List[Document]:
